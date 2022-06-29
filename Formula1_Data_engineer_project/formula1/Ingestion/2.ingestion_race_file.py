@@ -17,6 +17,11 @@ data_source=dbutils.widgets.get("data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC step 1. read the csv from the adls datalake 
 
@@ -43,7 +48,7 @@ race_df_raw=spark\
 .read\
 .option("header",True)\
 .schema(race_schema)\
-.csv(f"{raw_folder_path}/races.csv")
+.csv(f"{raw_folder_path}/{file_date}/races.csv")
 
 # COMMAND ----------
 
@@ -64,7 +69,8 @@ race_df_cols=race_df_raw[col("raceid"), col("year"),col("round"),col("circuitid"
 race_df_rename=race_df_cols.withColumnRenamed("raceid","race_id")\
 .withColumnRenamed("year","race_year")\
 .withColumn("data_source",lit(f"{data_source}"))\
-.withColumnRenamed("circuitid","circuit_id")
+.withColumnRenamed("circuitid","circuit_id")\
+.withColumn("file_date",lit(f"{file_date}"))
 
 # COMMAND ----------
 
@@ -86,7 +92,7 @@ race_df_timeStamp=race_df_addcol.withColumn("race_timestamp", to_timestamp(conca
 
 # COMMAND ----------
 
-race_final_df=race_df_timeStamp[col("race_id"),col("race_year"),col("round"),col("circuit_id"),col("name"),col("ingestion_date"),col("race_timestamp"),col("data_source")]
+race_final_df=race_df_timeStamp[col("race_id"),col("race_year"),col("round"),col("circuit_id"),col("name"),col("ingestion_date"),col("race_timestamp"),col("data_source"),col("file_date")]
 
 # COMMAND ----------
 
@@ -96,6 +102,10 @@ race_final_df=race_df_timeStamp[col("race_id"),col("race_year"),col("round"),col
 # COMMAND ----------
 
 race_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.races")
+
+# COMMAND ----------
+
+display(spark.read.parquet(f"{processed_folder_path}/races"))
 
 # COMMAND ----------
 

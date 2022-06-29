@@ -17,6 +17,11 @@ data_source=dbutils.widgets.get("data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step 1. define the schema for the data 
 
@@ -43,7 +48,7 @@ qulifying_schema=StructType([StructField("raceId", IntegerType(),False),
 qulifying_df=spark.read\
 .schema(qulifying_schema)\
 .option("multiLine",True)\
-.json(f"{raw_folder_path}/qualifying")
+.json(f"{raw_folder_path}/{file_date}/qualifying")
 
 
 # COMMAND ----------
@@ -61,7 +66,8 @@ qulifying_df_rename=qulifying_df.withColumnRenamed("raceId","race_id")\
                                 .withColumnRenamed("driverId","driver_id")\
                                 .withColumnRenamed("qualifyId","qualify_id")\
                                 .withColumnRenamed("constructorId","constructor_id")\
-                                .withColumn("data_source",lit(f"{data_source}"))
+                                .withColumn("data_source",lit(f"{data_source}"))\
+                                .withColumn("file_date",lit(f"{file_date}"))
 qualify_final_df=add_ingetion_date(qulifying_df_rename)
 
 # COMMAND ----------
@@ -71,11 +77,23 @@ qualify_final_df=add_ingetion_date(qulifying_df_rename)
 
 # COMMAND ----------
 
-qualify_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.qualifying")
+qualify_final_df=reorder_partioned_column(qualify_final_df,'race_id')
+
+# COMMAND ----------
+
+incremental_load(qualify_final_df,'f1_processed.qualifying','race_id')
 
 # COMMAND ----------
 
 display(spark.read.parquet(f"{processed_folder_path}/qualifying"))
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select race_id,count(*)
+# MAGIC from f1_processed.qualifying
+# MAGIC group by race_id
+# MAGIC order by race_id desc
 
 # COMMAND ----------
 

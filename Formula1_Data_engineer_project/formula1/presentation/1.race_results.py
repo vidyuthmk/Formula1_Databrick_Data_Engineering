@@ -7,6 +7,11 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 from pyspark.sql.functions import current_timestamp
 
 # COMMAND ----------
@@ -52,22 +57,35 @@ race_result_df=result_df.join(race_circuit_df,race_circuit_df.race_id==result_df
                         .join(drivers_df,drivers_df.driver_id==result_df.driver_id)\
                         .select(race_circuit_df["race_id"],race_circuit_df["race_name"],race_circuit_df["race_year"],race_circuit_df["circuit_location"]\
                                                 ,team_df["team"],drivers_df["driver_number"],drivers_df["driver_name"],drivers_df["driver_nationality"]\
-                                                  ,result_df["grid"],result_df["fastest_lap"],result_df["race_time"],result_df["points"],result_df["position"])
+                                                  ,result_df["grid"],result_df["fastest_lap"],result_df["race_time"],result_df["points"],result_df["position"],result_df["file_date"])
 
 
 # COMMAND ----------
 
-final_presentaion_df=race_result_df.withColumn("created_date",current_timestamp())
+final_presentaion_df=race_result_df.withColumn("created_date",current_timestamp())\
+                                   .filter(f"file_date='{file_date}'")
 
 
 
 # COMMAND ----------
 
-final_presentaion_df.write.mode("overwrite").format("parquet").saveAsTable("f1_presentation.race_results")
+final_presentaion_df=reorder_partioned_column(final_presentaion_df,"race_id")
 
 # COMMAND ----------
 
-display(spark.read.parquet(f"{presentation_folder}/race_results"))
+incremental_load(final_presentaion_df,'f1_presentation.race_results','race_id')
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select race_id,count(*)
+# MAGIC from f1_presentation.race_results
+# MAGIC group by race_id
+# MAGIC order by race_id desc
+
+# COMMAND ----------
+
+dbutils.notebook.exit("Success")
 
 # COMMAND ----------
 

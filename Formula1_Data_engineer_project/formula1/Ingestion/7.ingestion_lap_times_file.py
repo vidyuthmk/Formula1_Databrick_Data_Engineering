@@ -17,6 +17,11 @@ data_source=dbutils.widgets.get("data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step 1. define the schema for the data 
 
@@ -41,7 +46,7 @@ lap_time=StructType([StructField("raceId", IntegerType(),False),
 lap_time_df=spark.read\
 .schema(lap_time)\
 .option("multiLine",True)\
-.csv(f"{raw_folder_path}/lap_times")
+.csv(f"{raw_folder_path}/{file_date}/lap_times")
 
 
 # COMMAND ----------
@@ -57,9 +62,13 @@ from pyspark.sql.functions import current_timestamp
 
 lap_time_df_rename=lap_time_df.withColumnRenamed("raceId","race_id")\
                                 .withColumnRenamed("driverId","driver_id")\
-                                .withColumn("data_source",lit(f"{data_source}"))
-
+                                .withColumn("data_source",lit(f"{data_source}"))\
+                                .withColumn("file_date",lit(f"{file_date}"))
 lap_time_df_final=add_ingetion_date(lap_time_df_rename)
+
+# COMMAND ----------
+
+lap_time_df_final=reorder_partioned_column(lap_time_df_final,'race_id')
 
 # COMMAND ----------
 
@@ -68,7 +77,15 @@ lap_time_df_final=add_ingetion_date(lap_time_df_rename)
 
 # COMMAND ----------
 
-lap_time_df_final.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.lap_times")
+incremental_load(lap_time_df_final,"f1_processed.lap_times",'race_id')
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select race_id,count(*)
+# MAGIC from f1_processed.lap_times
+# MAGIC group by race_id
+# MAGIC order by race_id desc
 
 # COMMAND ----------
 

@@ -17,6 +17,11 @@ data_source=dbutils.widgets.get("data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step 1. read the CSV file using spark data source reader 
 
@@ -43,7 +48,7 @@ circuit_schema=StructType([StructField("circuitId", IntegerType(), False),
 circute_df=spark.read\
 .option("header", True)\
 .schema(circuit_schema)\
-.csv(f"{raw_folder_path}/circuits.csv")
+.csv(f"{raw_folder_path}/{file_date}/circuits.csv")
 
 # COMMAND ----------
 
@@ -66,7 +71,8 @@ circute_df_renamed=circute_df_reqired.withColumnRenamed("circuitid","circuit_id"
 .withColumnRenamed("lat", "latitude")\
 .withColumnRenamed("lng", "longitude")\
 .withColumn("data_source",lit(f"{data_source}"))\
-.withColumnRenamed("alt", "altitude")
+.withColumnRenamed("alt", "altitude")\
+.withColumn("file_date",lit(f"{file_date}"))
 
 # COMMAND ----------
 
@@ -85,6 +91,10 @@ circuit_final_df=add_ingetion_date(circute_df_renamed)
 # COMMAND ----------
 
 circuit_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.circuits")
+
+# COMMAND ----------
+
+display(spark.read.parquet(f"{processed_folder_path}/circuits"))
 
 # COMMAND ----------
 

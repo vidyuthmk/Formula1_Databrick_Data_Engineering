@@ -12,6 +12,11 @@
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 dbutils.widgets.text("data_source","","data_source")
 data_source=dbutils.widgets.get("data_source")
 
@@ -35,7 +40,7 @@ constructor_schema=StructType([
 
 constructor_df = spark.read\
 .schema(constructor_schema)\
-.json(f"{raw_folder_path}/constructors.json")
+.json(f"{raw_folder_path}/{file_date}/constructors.json")
 
 # COMMAND ----------
 
@@ -54,7 +59,8 @@ constructor_df_modified=constructor_df[col("constructorId").alias("constructor_i
 # COMMAND ----------
 
 constructor_df_final=add_ingetion_date(constructor_df_modified)
-constructor_df_final=constructor_df_final.withColumn("data_source",lit(f"{data_source}"))
+constructor_df_final=constructor_df_final.withColumn("data_source",lit(f"{data_source}"))\
+                                        .withColumn("file_date",lit(f"{file_date}"))
 
 # COMMAND ----------
 
@@ -64,6 +70,10 @@ constructor_df_final=constructor_df_final.withColumn("data_source",lit(f"{data_s
 # COMMAND ----------
 
 constructor_df_final.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.constructors")
+
+# COMMAND ----------
+
+display(spark.read.parquet(f"{processed_folder_path}/constructors"))
 
 # COMMAND ----------
 

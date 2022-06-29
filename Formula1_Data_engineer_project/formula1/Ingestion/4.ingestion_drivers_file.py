@@ -17,6 +17,11 @@ data_source=dbutils.widgets.get("data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-21","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step 1. prepare the schema and read from the datalake
 
@@ -47,7 +52,7 @@ driver_schema=StructType([StructField("code",StringType(),True),
 
 drivers_df=spark.read\
 .schema(driver_schema)\
-.json(f"{raw_folder_path}/drivers.json")
+.json(f"{raw_folder_path}/{file_date}/drivers.json")
 
 # COMMAND ----------
 
@@ -68,6 +73,7 @@ drivers_df_namecombine=drivers_df.withColumn("name",concat(col("name.forename"),
 drivers_df_final=drivers_df_namecombine.withColumnRenamed("driverId","driver_id")\
                  .withColumnRenamed("driverRef","driver_ref")\
                  .withColumn("data_source",lit(f"{data_source}"))\
+                 .withColumn("file_date",lit(f"{file_date}"))\
                  .drop("url")
 drivers_df_final=add_ingetion_date(drivers_df_final)
 
@@ -79,6 +85,10 @@ drivers_df_final=add_ingetion_date(drivers_df_final)
 # COMMAND ----------
 
 drivers_df_final.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.drivers")
+
+# COMMAND ----------
+
+display(spark.read.parquet(f"{processed_folder_path}/drivers"))
 
 # COMMAND ----------
 

@@ -17,6 +17,11 @@ data_source=dbutils.widgets.get("data_source")
 
 # COMMAND ----------
 
+dbutils.widgets.text("file_date","2021-03-28","File Date")
+file_date=dbutils.widgets.get("file_date")
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step 1. create your own schema for the file and read the data from the data lake
 
@@ -52,11 +57,7 @@ result_schema=StructType([StructField("constructorId", IntegerType(),False),
 
 results_df=spark.read\
 .schema(result_schema)\
-.json(f"{raw_folder_path}/results.json") 
-
-# COMMAND ----------
-
-display(results_df)
+.json(f"{raw_folder_path}/{file_date}/results.json") 
 
 # COMMAND ----------
 
@@ -75,19 +76,12 @@ results_df_1=results_df.withColumnRenamed("resultId","result_id")\
 
 # COMMAND ----------
 
-display(results_df_1)
-
-# COMMAND ----------
-
 results_df_2=results_df_1.withColumnRenamed("fastestLapTime","fastest_lap_time")\
                                     .withColumnRenamed("fastestLapSpeed","fastest_lap_speed")\
                                     .withColumn("data_source",lit(f"{data_source}"))\
+                                    .withColumn("file_date",lit(f"{file_date}"))\
                                     .drop("statusId")
 results_df_final=add_ingetion_date(results_df_2)
-
-# COMMAND ----------
-
-display(results_df_final)
 
 # COMMAND ----------
 
@@ -96,11 +90,23 @@ display(results_df_final)
 
 # COMMAND ----------
 
-results_df_final.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.results")
+results_df_f=reorder_partioned_column(results_df_final,'race_id')
+
+# COMMAND ----------
+
+incremental_load(results_df_f,"f1_processed.results",'race_id')
 
 # COMMAND ----------
 
 display(spark.read.parquet(f"{processed_folder_path}/results"))
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select race_id , count(*)
+# MAGIC from f1_processed.results
+# MAGIC group by race_id
+# MAGIC order by race_id desc
 
 # COMMAND ----------
 
