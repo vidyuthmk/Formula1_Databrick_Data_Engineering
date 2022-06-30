@@ -77,15 +77,11 @@ qualify_final_df=add_ingetion_date(qulifying_df_rename)
 
 # COMMAND ----------
 
-qualify_final_df=reorder_partioned_column(qualify_final_df,'race_id')
+merge_condition="tgt.driver_id=src.driver_id and tgt.constructor_id=src.constructor_id and tgt.race_id=src.race_id"
 
 # COMMAND ----------
 
-incremental_load(qualify_final_df,'f1_processed.qualifying','race_id')
-
-# COMMAND ----------
-
-display(spark.read.parquet(f"{processed_folder_path}/qualifying"))
+mergedata(processed_folder_path,"qualifying",qualify_final_df,"f1_processed.qualifying",'race_id',merge_condition)
 
 # COMMAND ----------
 

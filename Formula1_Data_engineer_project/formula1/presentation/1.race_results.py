@@ -16,11 +16,11 @@ from pyspark.sql.functions import current_timestamp
 
 # COMMAND ----------
 
-race_df=spark.read.parquet(f"{processed_folder_path}/races")
-circute_df=spark.read.parquet(f"{processed_folder_path}/circuits")
-drivers_df=spark.read.parquet(f"{processed_folder_path}/drivers")
-team_df=spark.read.parquet(f"{processed_folder_path}/constructors")
-result_df=spark.read.parquet(f"{processed_folder_path}/results")
+race_df=spark.read.format("delta").load(f"{processed_folder_path}/races")
+circute_df=spark.read.format("delta").load(f"{processed_folder_path}/circuits")
+drivers_df=spark.read.format("delta").load(f"{processed_folder_path}/drivers")
+team_df=spark.read.format("delta").load(f"{processed_folder_path}/constructors")
+result_df=spark.read.format("delta").load(f"{processed_folder_path}/results")
 
 # COMMAND ----------
 
@@ -69,11 +69,15 @@ final_presentaion_df=race_result_df.withColumn("created_date",current_timestamp(
 
 # COMMAND ----------
 
-final_presentaion_df=reorder_partioned_column(final_presentaion_df,"race_id")
+merge_condition="tgt.race_id=src.race_id"
 
 # COMMAND ----------
 
-incremental_load(final_presentaion_df,'f1_presentation.race_results','race_id')
+mergedata(presentation_folder,"race_results",final_presentaion_df,'f1_presentation.race_results','race_id',merge_condition)
+
+# COMMAND ----------
+
+
 
 # COMMAND ----------
 

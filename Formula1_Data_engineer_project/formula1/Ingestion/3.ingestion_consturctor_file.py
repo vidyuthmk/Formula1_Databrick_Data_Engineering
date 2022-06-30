@@ -69,11 +69,11 @@ constructor_df_final=constructor_df_final.withColumn("data_source",lit(f"{data_s
 
 # COMMAND ----------
 
-constructor_df_final.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.constructors")
+constructor_df_final.write.mode("overwrite").format("delta").saveAsTable("f1_processed.constructors")
 
 # COMMAND ----------
 
-display(spark.read.parquet(f"{processed_folder_path}/constructors"))
+display(spark.read.format("delta").load(f"{processed_folder_path}/constructors"))
 
 # COMMAND ----------
 

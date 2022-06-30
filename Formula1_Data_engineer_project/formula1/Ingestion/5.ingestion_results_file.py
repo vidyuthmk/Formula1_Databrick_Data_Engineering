@@ -1,6 +1,6 @@
 # Databricks notebook source
 # MAGIC %md
-# MAGIC ### Tranform the file to parquet file 
+# MAGIC ### Tranform the file to delta table file 
 
 # COMMAND ----------
 
@@ -90,23 +90,11 @@ results_df_final=add_ingetion_date(results_df_2)
 
 # COMMAND ----------
 
-results_df_f=reorder_partioned_column(results_df_final,'race_id')
+merge_condition="tgt.result_id=src.result_id AND tgt.race_id=src.race_id"
 
 # COMMAND ----------
 
-incremental_load(results_df_f,"f1_processed.results",'race_id')
-
-# COMMAND ----------
-
-display(spark.read.parquet(f"{processed_folder_path}/results"))
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select race_id , count(*)
-# MAGIC from f1_processed.results
-# MAGIC group by race_id
-# MAGIC order by race_id desc
+mergedata(processed_folder_path,'results',results_df_final,"f1_processed.results",'race_id',merge_condition)
 
 # COMMAND ----------
 

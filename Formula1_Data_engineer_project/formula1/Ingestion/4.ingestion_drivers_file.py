@@ -84,11 +84,11 @@ drivers_df_final=add_ingetion_date(drivers_df_final)
 
 # COMMAND ----------
 
-drivers_df_final.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.drivers")
+drivers_df_final.write.mode("overwrite").format("delta").saveAsTable("f1_processed.drivers")
 
 # COMMAND ----------
 
-display(spark.read.parquet(f"{processed_folder_path}/drivers"))
+display(spark.read.format("delta").load(f"{processed_folder_path}/drivers"))
 
 # COMMAND ----------
 

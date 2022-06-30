@@ -26,13 +26,16 @@ DROP TABLE IF EXISTS f1_processed.results
 
 -- COMMAND ----------
 
--- MAGIC %sql
--- MAGIC drop table if exists f1_presentation.driver_standings
+drop table if exists f1_presentation.driver_standings
 
 -- COMMAND ----------
 
 drop table if exists f1_presentation.constructor_standing
 
+
+-- COMMAND ----------
+
+DROP DATABASE IF EXISTS formula1 CASCADE;
 
 -- COMMAND ----------
 

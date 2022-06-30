@@ -23,7 +23,7 @@ file_date=dbutils.widgets.get("file_date")
 # COMMAND ----------
 
 # MAGIC %md
-# MAGIC Step 1. read the CSV file using spark data source reader 
+# MAGIC Step 1. read the CSV file using spark data source reader API
 
 # COMMAND ----------
 
@@ -90,11 +90,11 @@ circuit_final_df=add_ingetion_date(circute_df_renamed)
 
 # COMMAND ----------
 
-circuit_final_df.write.mode("overwrite").format("parquet").saveAsTable("f1_processed.circuits")
+circuit_final_df.write.mode("overwrite").format("delta").saveAsTable("f1_processed.circuits")
 
 # COMMAND ----------
 
-display(spark.read.parquet(f"{processed_folder_path}/circuits"))
+display(spark.read.format("delta").load(f"{processed_folder_path}/circuits"))
 
 # COMMAND ----------
 

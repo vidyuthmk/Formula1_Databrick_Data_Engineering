@@ -61,7 +61,7 @@ pitstops_df_renamed=pitstops_df.withColumnRenamed("raceId","race_id")\
                                .withColumnRenamed("driverId","driver_id")\
                                .withColumn("data_source",lit(f"{data_source}"))\
                                .withColumn("file_date",lit(f"{file_date}"))
-pitstops_df_renamed=add_ingetion_date(pitstops_df_renamed)
+pitstops_df_final=add_ingetion_date(pitstops_df_renamed)
 
 # COMMAND ----------
 
@@ -70,24 +70,16 @@ pitstops_df_renamed=add_ingetion_date(pitstops_df_renamed)
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC --drop table if exists f1_processed.pit_stops 
+merge_condition="tgt.driver_id=src.driver_id AND tgt.race_id=src.race_id"
 
 # COMMAND ----------
 
-pit_stop_final=reorder_partioned_column(pitstops_df_renamed,'race_id')
-
-# COMMAND ----------
-
-incremental_load(pit_stop_final,"f1_processed.pit_stops",'race_id')
+mergedata(processed_folder_path,'pit_stops',pitstops_df_final,"f1_processed.pit_stops",'race_id',merge_condition)
 
 # COMMAND ----------
 
 # MAGIC %sql
-# MAGIC select race_id,count(*)
-# MAGIC from f1_processed.pit_stops
-# MAGIC group by race_id
-# MAGIC order by race_id desc
+# MAGIC DESC HISTORY f1_processed.pit_stops
 
 # COMMAND ----------
 

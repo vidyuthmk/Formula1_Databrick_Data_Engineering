@@ -68,16 +68,16 @@ lap_time_df_final=add_ingetion_date(lap_time_df_rename)
 
 # COMMAND ----------
 
-lap_time_df_final=reorder_partioned_column(lap_time_df_final,'race_id')
-
-# COMMAND ----------
-
 # MAGIC %md
 # MAGIC Step 3 write the data back to datalake in parquet format
 
 # COMMAND ----------
 
-incremental_load(lap_time_df_final,"f1_processed.lap_times",'race_id')
+merge_condition="tgt.driver_id=src.driver_id and tgt.race_id=src.race_id"
+
+# COMMAND ----------
+
+mergedata(processed_folder_path,"lap_times",lap_time_df_final,"f1_processed.lap_times",'race_id',merge_condition)
 
 # COMMAND ----------
 
