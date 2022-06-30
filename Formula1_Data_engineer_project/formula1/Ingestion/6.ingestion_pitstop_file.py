@@ -70,7 +70,7 @@ pitstops_df_final=add_ingetion_date(pitstops_df_renamed)
 
 # COMMAND ----------
 
-merge_condition="tgt.driver_id=src.driver_id AND tgt.race_id=src.race_id"
+merge_condition="tgt.driver_id=src.driver_id AND tgt.stop=src.stop AND tgt.race_id=src.race_id"
 
 # COMMAND ----------
 

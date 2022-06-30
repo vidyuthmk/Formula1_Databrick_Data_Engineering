@@ -77,7 +77,7 @@ qualify_final_df=add_ingetion_date(qulifying_df_rename)
 
 # COMMAND ----------
 
-merge_condition="tgt.driver_id=src.driver_id and tgt.constructor_id=src.constructor_id and tgt.race_id=src.race_id"
+merge_condition="tgt.qualify_id=src.qualify_id and tgt.race_id = src.race_id"
 
 # COMMAND ----------
 

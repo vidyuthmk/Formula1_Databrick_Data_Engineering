@@ -17,7 +17,7 @@ from pyspark.sql.window import Window
 
 # COMMAND ----------
 
-cons_df=spark.read.parquet(f"{presentation_folder}/race_results")\
+cons_df=spark.read.format("delta").load(f"{presentation_folder}/race_results")\
                     .filter(f"file_date='{file_date}'")
 
 # COMMAND ----------
@@ -48,19 +48,18 @@ final_df=final_df.filter(col("race_year").isin(race_years))
 
 # COMMAND ----------
 
-final_df=reorder_partioned_column(final_df,'race_year')
+merge_condition="tgt.team=src.team and tgt.race_year=src.race_year"
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
-incremental_load(final_df,"f1_presentation.constructor_standing",'race_year')
+mergedata(presentation_folder,"constructor_standing",final_df,'f1_presentation.constructor_standing','race_year',merge_condition)
 
 # COMMAND ----------
 
-display(spark.read.parquet(f"{presentation_folder}/constructor_standing"))
+# MAGIC %sql
+# MAGIC select * 
+# MAGIC from f1_presentation.constructor_standing
+# MAGIC where race_year=2014
 
 # COMMAND ----------
 

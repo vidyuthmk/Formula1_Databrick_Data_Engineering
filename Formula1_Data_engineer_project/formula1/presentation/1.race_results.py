@@ -57,7 +57,7 @@ race_result_df=result_df.join(race_circuit_df,race_circuit_df.race_id==result_df
                         .join(drivers_df,drivers_df.driver_id==result_df.driver_id)\
                         .select(race_circuit_df["race_id"],race_circuit_df["race_name"],race_circuit_df["race_year"],race_circuit_df["circuit_location"]\
                                                 ,team_df["team"],drivers_df["driver_number"],drivers_df["driver_name"],drivers_df["driver_nationality"]\
-                                                  ,result_df["grid"],result_df["fastest_lap"],result_df["race_time"],result_df["points"],result_df["position"],result_df["file_date"])
+                                                  ,result_df["grid"],result_df["fastest_lap"],result_df["race_time"],result_df["points"],result_df["position"],result_df["file_date"],result_df['driver_id'])
 
 
 # COMMAND ----------
@@ -69,7 +69,7 @@ final_presentaion_df=race_result_df.withColumn("created_date",current_timestamp(
 
 # COMMAND ----------
 
-merge_condition="tgt.race_id=src.race_id"
+merge_condition="tgt.race_id=src.race_id and tgt.driver_id=src.driver_id"
 
 # COMMAND ----------
 
@@ -90,7 +90,3 @@ mergedata(presentation_folder,"race_results",final_presentaion_df,'f1_presentati
 # COMMAND ----------
 
 dbutils.notebook.exit("Success")
-
-# COMMAND ----------
-
-

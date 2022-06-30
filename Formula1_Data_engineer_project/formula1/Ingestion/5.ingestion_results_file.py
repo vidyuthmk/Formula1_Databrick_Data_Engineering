@@ -85,6 +85,15 @@ results_df_final=add_ingetion_date(results_df_2)
 
 # COMMAND ----------
 
+results_df_final=results_df_final.dropDuplicates(['race_id','driver_id'])
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC --drop table if exists f1_processed.results
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step4 . insert the data into datalake in parquet with partitioned by race_id
 
@@ -95,6 +104,12 @@ merge_condition="tgt.result_id=src.result_id AND tgt.race_id=src.race_id"
 # COMMAND ----------
 
 mergedata(processed_folder_path,'results',results_df_final,"f1_processed.results",'race_id',merge_condition)
+
+# COMMAND ----------
+
+# MAGIC %sql
+# MAGIC select count (*)
+# MAGIC from f1_processed.results
 
 # COMMAND ----------
 

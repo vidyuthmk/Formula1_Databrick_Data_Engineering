@@ -73,7 +73,7 @@ lap_time_df_final=add_ingetion_date(lap_time_df_rename)
 
 # COMMAND ----------
 
-merge_condition="tgt.driver_id=src.driver_id and tgt.race_id=src.race_id"
+merge_condition="tgt.driver_id=src.driver_id and tgt.race_id=src.race_id And tgt.lap=src.lap"
 
 # COMMAND ----------
 

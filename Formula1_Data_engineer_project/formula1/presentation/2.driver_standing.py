@@ -22,7 +22,7 @@ from pyspark.sql.window import Window
 
 # COMMAND ----------
 
-driver_standing=spark.read.parquet(f"{presentation_folder}/race_results")\
+driver_standing=spark.read.format("delta").load(f"{presentation_folder}/race_results")\
                             .filter(f"file_date='{file_date}'")
 
 # COMMAND ----------
@@ -31,40 +31,40 @@ driver_rank=Window.partitionBy('race_year').orderBy(desc("points"))
 
 # COMMAND ----------
 
-final_df=driver_standing.groupBy("race_year","driver_name","team","file_date")\
+final_df=driver_standing.groupBy("race_year","driver_name","driver_id","team","file_date")\
                                                 .agg(sum("points").alias("Points"),count(when(col("position")==1,True)).alias("Wins"))
 
 # COMMAND ----------
 
-final_df_list=final_df.withColumn("rank",rank().over(driver_rank))\
-                 .select("race_year").distinct()\
+final_df=final_df.withColumn("rank",rank().over(driver_rank))
+
+# COMMAND ----------
+
+final_df_list=final_df.select("race_year").distinct()\
                  .collect()
 
 # COMMAND ----------
 
-race_year_list=[]
-for year in final_df_list:
-    race_year_list.append(year.race_year)
+race_year_list=getRaceList(final_df_list)
 
 # COMMAND ----------
 
 final_df=final_df.filter(col("race_year").isin(race_year_list))
-display(final_df)
 
 # COMMAND ----------
 
-final_df=reorder_partioned_column(final_df,'race_year')
+merge_condition="tgt.race_year =src.race_year and tgt.driver_id=src.driver_id"
 
 # COMMAND ----------
 
-incremental_load(final_df,"f1_presentation.driver_standings",'race_year')
+mergedata(presentation_folder,"driver_standings",final_df,'f1_presentation.driver_standings','race_year',merge_condition)
 
 # COMMAND ----------
 
 # MAGIC %sql
 # MAGIC select *
 # MAGIC from f1_presentation.driver_standings
-# MAGIC where race_year=2021
+# MAGIC where race_year=2001
 
 # COMMAND ----------
 
