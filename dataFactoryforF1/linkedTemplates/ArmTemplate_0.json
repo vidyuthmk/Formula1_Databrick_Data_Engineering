@@ -1,0 +1,91 @@
+{
+	"$schema": "http://schema.management.azure.com/schemas/2015-01-01/deploymentTemplate.json#",
+	"contentVersion": "1.0.0.0",
+	"parameters": {
+		"factoryName": {
+			"type": "string",
+			"metadata": "Data Factory name",
+			"defaultValue": "dataFactoryforF1"
+		}
+	},
+	"variables": {
+		"factoryId": "[concat('Microsoft.DataFactory/factories/', parameters('factoryName'))]"
+	},
+	"resources": [
+		{
+			"name": "[concat(parameters('factoryName'), '/ls_databricks_learning')]",
+			"type": "Microsoft.DataFactory/factories/linkedServices",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"type": "AzureDatabricks",
+				"typeProperties": {
+					"domain": "https://adb-7896172621908008.8.azuredatabricks.net",
+					"authentication": "MSI",
+					"workspaceResourceId": "/subscriptions/60260c42-086b-4d3a-840f-e978cd41d4d9/resourceGroups/DataBricks/providers/Microsoft.Databricks/workspaces/DataEngineering",
+					"existingClusterId": "0522-191329-su2ta1gn"
+				}
+			},
+			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/pl_ingest_formula1_data')]",
+			"type": "Microsoft.DataFactory/factories/pipelines",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"activities": [
+					{
+						"name": "ingest_circuit_file",
+						"type": "DatabricksNotebook",
+						"dependsOn": [],
+						"policy": {
+							"timeout": "7.00:00:00",
+							"retry": 0,
+							"retryIntervalInSeconds": 30,
+							"secureOutput": false,
+							"secureInput": false
+						},
+						"userProperties": [],
+						"typeProperties": {
+							"notebookPath": "/Repos/vidyadhar23m@gmail.com/Formula1_Databrick_Data_Engineering/Formula1_Data_engineer_project/formula1/Ingestion/1.ingestion_circuts_file",
+							"baseParameters": {
+								"data_source": {
+									"value": "@variables('data_source')",
+									"type": "Expression"
+								},
+								"file_date": {
+									"value": "@formatDateTime(pipeline().parameters.window_end_date,'yyyy-MM-dd')",
+									"type": "Expression"
+								}
+							}
+						},
+						"linkedServiceName": {
+							"referenceName": "ls_databricks_learning",
+							"type": "LinkedServiceReference"
+						}
+					}
+				],
+				"concurrency": 1,
+				"policy": {
+					"elapsedTimeMetric": {},
+					"cancelAfter": {}
+				},
+				"parameters": {
+					"window_end_date": {
+						"type": "string"
+					}
+				},
+				"variables": {
+					"data_source": {
+						"type": "String",
+						"defaultValue": "Ergas_api"
+					}
+				},
+				"annotations": []
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/linkedServices/ls_databricks_learning')]"
+			]
+		}
+	]
+}
