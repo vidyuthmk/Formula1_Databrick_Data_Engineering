@@ -1,0 +1,20 @@
+{
+	"name": "tr_proccess_fomula1_data",
+	"properties": {
+		"annotations": [],
+		"runtimeState": "Stopped",
+		"type": "TumblingWindowTrigger",
+		"typeProperties": {
+			"frequency": "Hour",
+			"interval": 168,
+			"startTime": "2021-03-14T10:00:00Z",
+			"endTime": "2021-04-25T10:00:00Z",
+			"delay": "00:00:00",
+			"maxConcurrency": 1,
+			"retryPolicy": {
+				"intervalInSeconds": 30
+			},
+			"dependsOn": []
+		}
+	}
+}
