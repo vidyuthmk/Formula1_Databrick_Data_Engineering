@@ -1,0 +1,9 @@
+{
+	"name": "dataFactoryforF1",
+	"location": "uksouth",
+	"identity": {
+		"type": "SystemAssigned",
+		"principalId": "2367fc5e-2960-41c6-8020-80b8ed7cd850",
+		"tenantId": "e27de2b9-4897-447d-84ad-0dec2cd0e397"
+	}
+}
