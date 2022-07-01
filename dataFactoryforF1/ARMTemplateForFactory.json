@@ -14,6 +14,10 @@
 		"ls_formula1_adls_properties_typeProperties_url": {
 			"type": "string",
 			"defaultValue": "https://formula1newdatalake.dfs.core.windows.net/"
+		},
+		"tr_proccess_fomula1_data_properties_pipeline_parameters_window_end_date": {
+			"type": "string",
+			"defaultValue": "@trigger().outputs.windowEndTime"
 		}
 	},
 	"variables": {
@@ -701,6 +705,40 @@
 				}
 			},
 			"dependsOn": []
+		},
+		{
+			"name": "[concat(parameters('factoryName'), '/tr_proccess_fomula1_data')]",
+			"type": "Microsoft.DataFactory/factories/triggers",
+			"apiVersion": "2018-06-01",
+			"properties": {
+				"annotations": [],
+				"runtimeState": "Started",
+				"pipeline": {
+					"pipelineReference": {
+						"referenceName": "pl_process_formula1_data",
+						"type": "PipelineReference"
+					},
+					"parameters": {
+						"window_end_date": "[parameters('tr_proccess_fomula1_data_properties_pipeline_parameters_window_end_date')]"
+					}
+				},
+				"type": "TumblingWindowTrigger",
+				"typeProperties": {
+					"frequency": "Hour",
+					"interval": 168,
+					"startTime": "2021-03-14T10:00:00Z",
+					"endTime": "2021-04-25T10:00:00Z",
+					"delay": "00:00:00",
+					"maxConcurrency": 1,
+					"retryPolicy": {
+						"intervalInSeconds": 30
+					},
+					"dependsOn": []
+				}
+			},
+			"dependsOn": [
+				"[concat(variables('factoryId'), '/pipelines/pl_process_formula1_data')]"
+			]
 		}
 	]
 }

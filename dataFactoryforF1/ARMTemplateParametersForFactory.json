@@ -10,6 +10,9 @@
 		},
 		"ls_formula1_adls_properties_typeProperties_url": {
 			"value": "https://formula1newdatalake.dfs.core.windows.net/"
+		},
+		"tr_proccess_fomula1_data_properties_pipeline_parameters_window_end_date": {
+			"value": "@trigger().outputs.windowEndTime"
 		}
 	}
 }
