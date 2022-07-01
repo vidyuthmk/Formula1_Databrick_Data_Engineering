@@ -85,12 +85,4 @@ mergedata(processed_folder_path,"qualifying",qualify_final_df,"f1_processed.qual
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC select race_id,count(*)
-# MAGIC from f1_processed.qualifying
-# MAGIC group by race_id
-# MAGIC order by race_id desc
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

@@ -88,8 +88,4 @@ drivers_df_final.write.mode("overwrite").format("delta").saveAsTable("f1_process
 
 # COMMAND ----------
 
-display(spark.read.format("delta").load(f"{processed_folder_path}/drivers"))
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

@@ -73,8 +73,4 @@ constructor_df_final.write.mode("overwrite").format("delta").saveAsTable("f1_pro
 
 # COMMAND ----------
 
-display(spark.read.format("delta").load(f"{processed_folder_path}/constructors"))
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

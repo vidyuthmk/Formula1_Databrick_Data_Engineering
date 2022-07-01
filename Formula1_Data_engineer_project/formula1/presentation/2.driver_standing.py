@@ -53,18 +53,15 @@ final_df=final_df.filter(col("race_year").isin(race_year_list))
 
 # COMMAND ----------
 
+final_df=final_df.dropDuplicates(['driver_id'])
+
+# COMMAND ----------
+
 merge_condition="tgt.race_year =src.race_year and tgt.driver_id=src.driver_id"
 
 # COMMAND ----------
 
 mergedata(presentation_folder,"driver_standings",final_df,'f1_presentation.driver_standings','race_year',merge_condition)
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select *
-# MAGIC from f1_presentation.driver_standings
-# MAGIC where race_year=2001
 
 # COMMAND ----------
 

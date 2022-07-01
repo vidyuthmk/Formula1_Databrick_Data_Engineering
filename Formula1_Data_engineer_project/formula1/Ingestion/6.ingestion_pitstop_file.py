@@ -78,9 +78,4 @@ mergedata(processed_folder_path,'pit_stops',pitstops_df_final,"f1_processed.pit_
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC DESC HISTORY f1_processed.pit_stops
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

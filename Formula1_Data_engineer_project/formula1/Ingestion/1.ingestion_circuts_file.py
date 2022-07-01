@@ -94,8 +94,4 @@ circuit_final_df.write.mode("overwrite").format("delta").saveAsTable("f1_process
 
 # COMMAND ----------
 
-display(spark.read.format("delta").load(f"{processed_folder_path}/circuits"))
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

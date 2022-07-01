@@ -77,16 +77,4 @@ mergedata(presentation_folder,"race_results",final_presentaion_df,'f1_presentati
 
 # COMMAND ----------
 
-
-
-# COMMAND ----------
-
-# MAGIC %sql
-# MAGIC select race_id,count(*)
-# MAGIC from f1_presentation.race_results
-# MAGIC group by race_id
-# MAGIC order by race_id desc
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

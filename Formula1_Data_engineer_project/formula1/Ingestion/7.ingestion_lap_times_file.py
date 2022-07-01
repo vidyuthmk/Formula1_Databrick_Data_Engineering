@@ -85,12 +85,4 @@ mergedata(processed_folder_path,"lap_times",lap_time_df_final,"f1_processed.lap_
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC select race_id,count(*)
-# MAGIC from f1_processed.lap_times
-# MAGIC group by race_id
-# MAGIC order by race_id desc
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

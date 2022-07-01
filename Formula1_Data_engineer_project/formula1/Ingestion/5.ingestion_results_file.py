@@ -107,10 +107,4 @@ mergedata(processed_folder_path,'results',results_df_final,"f1_processed.results
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC select count (*)
-# MAGIC from f1_processed.results
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

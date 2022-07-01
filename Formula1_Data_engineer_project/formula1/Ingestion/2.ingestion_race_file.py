@@ -105,8 +105,4 @@ race_final_df.write.mode("overwrite").format("delta").saveAsTable("f1_processed.
 
 # COMMAND ----------
 
-display(spark.read.format("delta").load(f"{processed_folder_path}/races"))
-
-# COMMAND ----------
-
 dbutils.notebook.exit("Success")

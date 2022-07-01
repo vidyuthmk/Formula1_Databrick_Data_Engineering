@@ -56,11 +56,4 @@ mergedata(presentation_folder,"constructor_standing",final_df,'f1_presentation.c
 
 # COMMAND ----------
 
-# MAGIC %sql
-# MAGIC select * 
-# MAGIC from f1_presentation.constructor_standing
-# MAGIC where race_year=2014
-
-# COMMAND ----------
-
 
