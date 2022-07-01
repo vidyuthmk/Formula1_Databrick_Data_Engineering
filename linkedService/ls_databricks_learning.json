@@ -1,0 +1,13 @@
+{
+	"name": "ls_databricks_learning",
+	"properties": {
+		"annotations": [],
+		"type": "AzureDatabricks",
+		"typeProperties": {
+			"domain": "https://adb-7896172621908008.8.azuredatabricks.net",
+			"authentication": "MSI",
+			"workspaceResourceId": "/subscriptions/60260c42-086b-4d3a-840f-e978cd41d4d9/resourceGroups/DataBricks/providers/Microsoft.Databricks/workspaces/DataEngineering",
+			"existingClusterId": "0522-191329-su2ta1gn"
+		}
+	}
+}
