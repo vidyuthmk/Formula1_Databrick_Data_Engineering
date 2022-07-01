@@ -1,0 +1,50 @@
+{
+	"name": "pl_ingest_formula1_data",
+	"properties": {
+		"activities": [
+			{
+				"name": "ingest_circuit_file",
+				"type": "DatabricksNotebook",
+				"dependsOn": [],
+				"policy": {
+					"timeout": "7.00:00:00",
+					"retry": 0,
+					"retryIntervalInSeconds": 30,
+					"secureOutput": false,
+					"secureInput": false
+				},
+				"userProperties": [],
+				"typeProperties": {
+					"notebookPath": "/Repos/vidyadhar23m@gmail.com/Formula1_Databrick_Data_Engineering/Formula1_Data_engineer_project/formula1/Ingestion/1.ingestion_circuts_file",
+					"baseParameters": {
+						"data_source": {
+							"value": "@variables('data_source')",
+							"type": "Expression"
+						},
+						"file_date": {
+							"value": "@formatDateTime(pipeline().parameters.window_end_date,'yyyy-MM-dd')",
+							"type": "Expression"
+						}
+					}
+				},
+				"linkedServiceName": {
+					"referenceName": "ls_databricks_learning",
+					"type": "LinkedServiceReference"
+				}
+			}
+		],
+		"concurrency": 1,
+		"parameters": {
+			"window_end_date": {
+				"type": "string"
+			}
+		},
+		"variables": {
+			"data_source": {
+				"type": "String",
+				"defaultValue": "Ergas_api"
+			}
+		},
+		"annotations": []
+	}
+}
