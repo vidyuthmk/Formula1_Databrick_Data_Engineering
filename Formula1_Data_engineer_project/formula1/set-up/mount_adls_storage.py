@@ -3,10 +3,6 @@ dbutils.secrets.list('formula1-scope')
 
 # COMMAND ----------
 
-dbutils.secrets.get('formula1-scope','databricksap-client-id')
-
-# COMMAND ----------
-
 storage_account_name  = "formula1newdatalake"
 client_id             = dbutils.secrets.get('formula1-scope','databricksap-client-id')
 tenant_id             = dbutils.secrets.get('formula1-scope','databricks-tenant-id')
@@ -23,7 +19,6 @@ config = {"fs.azure.account.auth.type":"OAuth",
 # COMMAND ----------
 
 def mountadls(container_name):
-    container_name = container_name
     dbutils.fs.mount(
         source = f"abfss://{container_name}@{storage_account_name}.dfs.core.windows.net/",
         mount_point = f"/mnt/{storage_account_name}/{container_name}",

@@ -68,12 +68,16 @@ lap_time_df_final=add_ingetion_date(lap_time_df_rename)
 
 # COMMAND ----------
 
+lap_time_df_final=lap_time_df_final.dropDuplicates(['race_id','driver_id'])
+
+# COMMAND ----------
+
 # MAGIC %md
 # MAGIC Step 3 write the data back to datalake in parquet format
 
 # COMMAND ----------
 
-merge_condition="tgt.driver_id=src.driver_id and tgt.race_id=src.race_id And tgt.lap=src.lap"
+merge_condition="tgt.race_id=src.race_id And tgt.driver_id=src.driver_id and tgt.lap=src.lap"
 
 # COMMAND ----------
 
