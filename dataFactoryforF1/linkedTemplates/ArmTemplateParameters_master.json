@@ -5,6 +5,12 @@
 		"factoryName": {
 			"value": "dataFactoryforF1"
 		},
+		"ls_formula1_adls_accountKey": {
+			"value": ""
+		},
+		"ls_formula1_adls_properties_typeProperties_url": {
+			"value": "https://formula1newdatalake.dfs.core.windows.net/"
+		},
 		"containerUri": {
 			"value": ""
 		},

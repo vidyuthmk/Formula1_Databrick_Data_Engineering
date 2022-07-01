@@ -7,6 +7,14 @@
 			"metadata": "Data Factory name",
 			"defaultValue": "dataFactoryforF1"
 		},
+		"ls_formula1_adls_accountKey": {
+			"type": "secureString",
+			"metadata": "Secure string for 'accountKey' of 'ls_formula1_adls'"
+		},
+		"ls_formula1_adls_properties_typeProperties_url": {
+			"type": "string",
+			"defaultValue": "https://formula1newdatalake.dfs.core.windows.net/"
+		},
 		"containerUri": {
 			"type": "string",
 			"metadata": "URI to storage account containing linked ARM templates"
@@ -33,6 +41,12 @@
 				"parameters": {
 					"factoryName": {
 						"value": "[parameters('factoryName')]"
+					},
+					"ls_formula1_adls_accountKey": {
+						"value": "[parameters('ls_formula1_adls_accountKey')]"
+					},
+					"ls_formula1_adls_properties_typeProperties_url": {
+						"value": "[parameters('ls_formula1_adls_properties_typeProperties_url')]"
 					}
 				}
 			},
